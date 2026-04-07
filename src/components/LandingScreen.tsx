@@ -63,6 +63,15 @@ export default function LandingScreen({ onStart }: Props) {
       >
         مدعوم بتقنية الذكاء الاصطناعي الخروفي 🧪
       </motion.p>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1 }}
+        className="text-muted-foreground/40 text-xs mt-2"
+      >
+        صُنع بكل حب 🤍 رغد
+      </motion.p>
     </motion.div>
   );
 }
