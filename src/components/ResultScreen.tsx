@@ -100,6 +100,10 @@ export default function ResultScreen({ personality, userName, onRestart }: Props
         <div className="text-muted-foreground/40 text-xs mt-2">
           خروفك.. مِرآة روحك! 🐑 | خروف {userName}
         </div>
+
+        <div className="text-muted-foreground/50 text-sm mt-3 font-medium">
+          كل عام وأنتم بخير 🤍✨
+        </div>
       </motion.div>
 
       {/* Action buttons */}
