@@ -47,8 +47,17 @@
 
     --glass: 0 0% 100% / 0.6;
     --glass-border: 0 0% 100% / 0.3;
-    --shadow-soft: 0 8px 32px -8px hsl(244 95% 69% / 0.12);
-    --shadow-card: 0 4px 24px -4px hsl(244 95% 69% / 0.08);
+    --shadow-soft: 0 8px 32px -8px hsl(244 95% 69% / 0.18);
+    --shadow-card: 0 4px 24px -4px hsl(244 95% 69% / 0.10);
+    --shadow-glow: 0 20px 60px -20px hsl(244 95% 69% / 0.45);
+    --shadow-elevated: 0 30px 80px -30px hsl(244 95% 69% / 0.35);
+
+    --gradient-primary: linear-gradient(135deg, hsl(244 95% 69%), hsl(280 90% 70%));
+    --gradient-aurora: linear-gradient(135deg, hsl(244 95% 69% / 0.25), hsl(280 90% 70% / 0.20), hsl(51 100% 60% / 0.18));
+    --gradient-mesh: radial-gradient(at 20% 20%, hsl(244 95% 69% / 0.18) 0px, transparent 50%),
+                     radial-gradient(at 80% 0%, hsl(280 90% 70% / 0.15) 0px, transparent 50%),
+                     radial-gradient(at 80% 80%, hsl(51 100% 60% / 0.12) 0px, transparent 50%),
+                     radial-gradient(at 0% 100%, hsl(190 90% 65% / 0.12) 0px, transparent 50%);
   }
 
   .dark {
@@ -93,45 +102,76 @@
 
   body {
     @apply bg-background text-foreground font-tajawal antialiased;
+    background-image: var(--gradient-mesh);
+    background-attachment: fixed;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/30 rounded-2xl;
+    @apply bg-card/60 backdrop-blur-xl border border-white/40 rounded-3xl;
     box-shadow: var(--shadow-card);
   }
 
   .glass-card-elevated {
-    @apply bg-card/70 backdrop-blur-xl border border-border/30 rounded-2xl;
-    box-shadow: var(--shadow-soft);
+    @apply bg-card/70 backdrop-blur-2xl border border-white/50 rounded-[2rem];
+    box-shadow: var(--shadow-elevated);
   }
 
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-l from-primary to-accent;
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(244 95% 69%), hsl(280 90% 70%), hsl(51 100% 55%));
+    background-size: 200% 200%;
+    animation: gradient-shift 6s ease infinite;
   }
 
   .btn-primary {
-    @apply bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-bold text-lg
-           shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.98];
+    @apply relative text-primary-foreground px-10 py-4 rounded-2xl font-bold text-lg
+           transition-all duration-300 hover:scale-[1.04] active:scale-[0.98] overflow-hidden;
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-glow);
   }
 
+  .btn-primary::before {
+    content: "";
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(135deg, hsl(280 90% 70%), hsl(244 95% 69%));
+  }
+
+  .btn-primary:hover::before { @apply opacity-100; }
+  .btn-primary > * { @apply relative z-10; }
+
   .btn-primary:hover {
-    box-shadow: 0 8px 32px -4px hsl(244 95% 69% / 0.4);
+    box-shadow: 0 25px 60px -15px hsl(244 95% 69% / 0.55);
+  }
+
+  .aurora-bg {
+    @apply absolute inset-0 overflow-hidden pointer-events-none -z-10;
+  }
+
+  .aurora-blob {
+    @apply absolute rounded-full blur-3xl opacity-60 mix-blend-multiply;
+    animation: aurora-float 18s ease-in-out infinite;
+  }
+
+  .signature-chip {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full
+           bg-white/40 backdrop-blur-md border border-white/60;
+    box-shadow: 0 4px 20px -4px hsl(244 95% 69% / 0.15);
   }
 }
 
 @layer utilities {
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
+  .animate-float { animation: float 3s ease-in-out infinite; }
+  .animate-float-delayed { animation: float 3s ease-in-out infinite 0.5s; }
+  .animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.5), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s infinite;
   }
-
-  .animate-float-delayed {
-    animation: float 3s ease-in-out infinite 0.5s;
-  }
-
-  .animate-pulse-soft {
-    animation: pulse-soft 2s ease-in-out infinite;
+  .text-shadow-glow {
+    text-shadow: 0 0 40px hsl(244 95% 69% / 0.4);
   }
 }
 
@@ -143,4 +183,20 @@
 @keyframes pulse-soft {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes aurora-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -40px) scale(1.1); }
+  66% { transform: translate(-30px, 30px) scale(0.95); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

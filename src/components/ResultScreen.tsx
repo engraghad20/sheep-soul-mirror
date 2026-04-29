@@ -97,12 +97,19 @@ export default function ResultScreen({ personality, userName, onRestart }: Props
           </p>
         </div>
 
-        <div className="text-muted-foreground/40 text-xs mt-2">
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-1" />
+
+        <div className="text-muted-foreground/50 text-xs">
           خروفك.. مِرآة روحك! 🐑 | خروف {userName}
         </div>
 
-        <div className="text-muted-foreground/50 text-sm mt-3 font-medium">
-          كل عام وأنتم بخير 🤍✨
+        <div className="text-center space-y-1">
+          <div className="text-foreground/70 text-sm font-bold">
+            كل عام وأنتم بخير 🤍✨
+          </div>
+          <div className="text-muted-foreground/40 text-[10px] font-medium tracking-wide">
+            صُنع بكل حب · م. رغد الشوافي
+          </div>
         </div>
       </motion.div>
 
