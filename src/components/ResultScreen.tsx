@@ -97,6 +97,50 @@ export default function ResultScreen({ personality, userName, onRestart }: Props
           </p>
         </div>
 
+        {/* AI deep insights */}
+        {(personality.strengths?.length || personality.hidden_trait || personality.eid_advice || personality.compatibility) && (
+          <div className="w-full space-y-3 mt-1">
+            <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+            {personality.strengths && personality.strengths.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="text-[11px] font-bold tracking-wide text-muted-foreground/70">نقاط قوتك</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {personality.strengths.map((s, i) => (
+                    <span
+                      key={i}
+                      className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                      style={{ backgroundColor: `${personality.color}12`, color: personality.color }}
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {personality.hidden_trait && (
+              <div className="rounded-xl p-3 text-right" style={{ backgroundColor: `${personality.secondaryColor}20` }}>
+                <div className="text-[11px] font-bold text-muted-foreground/70 mb-0.5">🔍 الجانب الخفي</div>
+                <div className="text-sm text-foreground/85 leading-relaxed">{personality.hidden_trait}</div>
+              </div>
+            )}
+
+            {personality.eid_advice && (
+              <div className="rounded-xl p-3 text-right border border-border/40">
+                <div className="text-[11px] font-bold text-muted-foreground/70 mb-0.5">🎁 نصيحة العيد</div>
+                <div className="text-sm text-foreground/85 leading-relaxed">{personality.eid_advice}</div>
+              </div>
+            )}
+
+            {personality.compatibility && (
+              <div className="text-xs text-center text-muted-foreground">
+                💞 يتوافق مع: <span className="font-bold text-foreground/80">{personality.compatibility}</span>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-1" />
 
         <div className="text-muted-foreground/50 text-xs">
