@@ -7,6 +7,11 @@ export interface SheepPersonality {
   secondaryColor: string;
   accessories: string[];
   emoji: string;
+  // Optional rich AI fields
+  strengths?: string[];
+  hidden_trait?: string;
+  eid_advice?: string;
+  compatibility?: string;
 }
 
 const TRAIT_MAP: Record<string, SheepPersonality> = {
