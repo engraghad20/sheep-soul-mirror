@@ -12,39 +12,42 @@ const LOGS = [
 
 interface Props {
   onComplete: () => void;
+  /** When false, the loader holds at ~90% waiting for the AI response. */
+  ready?: boolean;
 }
 
-export default function ProcessingScreen({ onComplete }: Props) {
+export default function ProcessingScreen({ onComplete, ready = true }: Props) {
   const [currentLog, setCurrentLog] = useState(0);
   const [progress, setProgress] = useState(0);
 
+  // Cycle log lines
   useEffect(() => {
-    const logInterval = setInterval(() => {
-      setCurrentLog((prev) => {
-        if (prev >= LOGS.length - 1) {
-          clearInterval(logInterval);
-          setTimeout(onComplete, 600);
-          return prev;
-        }
-        return prev + 1;
-      });
+    const id = setInterval(() => {
+      setCurrentLog((prev) => (prev < LOGS.length - 1 ? prev + 1 : prev));
     }, 700);
+    return () => clearInterval(id);
+  }, []);
 
-    const progressInterval = setInterval(() => {
+  // Progress bar: rises to 90 quickly, then waits for `ready` to finish.
+  useEffect(() => {
+    const id = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 2;
+        const cap = ready ? 100 : 90;
+        if (prev >= cap) return prev;
+        const step = prev < 60 ? 2.5 : prev < 85 ? 1 : 0.4;
+        return Math.min(cap, prev + step);
       });
     }, 80);
+    return () => clearInterval(id);
+  }, [ready]);
 
-    return () => {
-      clearInterval(logInterval);
-      clearInterval(progressInterval);
-    };
-  }, [onComplete]);
+  // Trigger completion only when AI is ready AND progress filled
+  useEffect(() => {
+    if (ready && progress >= 100) {
+      const t = setTimeout(onComplete, 400);
+      return () => clearTimeout(t);
+    }
+  }, [ready, progress, onComplete]);
 
   return (
     <motion.div
@@ -53,7 +56,6 @@ export default function ProcessingScreen({ onComplete }: Props) {
       exit={{ opacity: 0 }}
       className="flex flex-col items-center justify-center min-h-screen px-6 py-12 gap-8"
     >
-      {/* Spinning sheep emoji */}
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -64,20 +66,19 @@ export default function ProcessingScreen({ onComplete }: Props) {
 
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold text-foreground">جاري التحليل...</h2>
-        <p className="text-muted-foreground text-sm">الذكاء الاصطناعي يشتغل</p>
+        <p className="text-muted-foreground text-sm">
+          {ready ? "اللمسات الأخيرة..." : "الذكاء الاصطناعي يحلل شخصيتك بعمق"}
+        </p>
       </div>
 
-      {/* Progress bar */}
       <div className="w-full max-w-sm h-3 bg-secondary rounded-full overflow-hidden">
         <motion.div
           className="h-full rounded-full bg-gradient-to-l from-primary to-accent"
-          initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ ease: "easeOut" }}
         />
       </div>
 
-      {/* Terminal-like logs */}
       <div className="glass-card p-5 w-full max-w-sm font-mono text-sm space-y-2 min-h-[200px]" dir="ltr">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-3 h-3 rounded-full bg-destructive/70" />
