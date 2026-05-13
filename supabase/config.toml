@@ -1,0 +1,4 @@
+project_id = "bkcmmfwcuvepulvqrqbd"
+
+[functions.analyze-sheep]
+verify_jwt = false
